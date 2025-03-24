@@ -200,4 +200,4 @@
 "src/webservices/soap/ws-dns-lookup.php",147,"php.lang.security.exec-use.exec-use","Executing non-constant commands. This can lead to command injection."
 "src/webservices/soap/ws-echo.php",131,"php.lang.security.exec-use.exec-use","Executing non-constant commands. This can lead to command injection."
 "src/xml-validator.php",179,"php.lang.security.taint-unsafe-echo-tag.taint-unsafe-echo-tag","Found direct access to a PHP variable wihout HTML escaping inside an inline PHP statement setting data from `$_REQUEST[...]`. When untrusted input can be used to tamper with a web page rendering, it can lead to a Cross-site scripting (XSS) vulnerability. XSS vulnerabilities occur when untrusted input executes malicious JavaScript code, leading to issues such as account compromise and sensitive information leakage. To prevent this vulnerability, validate the user input, perform contextual output encoding or sanitize the input. In PHP you can encode or sanitize user input with `htmlspecialchars` or use automatic context-aware escaping with a template engine such as Latte."
-timestamp,Mon Mar 24 09:41:31 UTC 2025
+timestamp,Mon Mar 24 09:48:20 UTC 2025
