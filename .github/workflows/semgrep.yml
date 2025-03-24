@@ -6,7 +6,7 @@ on:
       - main
       - master
     paths:
-      - .github/workflows/semgrep.yml#This is the file.
+      - .github/workflows/semgrep.yml #This is the file.
 
 name: Semgrep
 
