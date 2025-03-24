@@ -15,7 +15,7 @@ jobs:
     name: semgrep/ci
     runs-on: ubuntu-latest
     permissions:
-      contents: write  # Required to push resultsss
+      contents: write  # Required to push resultssss
     env:
       SEMGREP_APP_TOKEN: ${{ secrets.SEMGREP_APP_TOKEN }}
     container:
