@@ -3,7 +3,7 @@ on:
     branches:
       - main
     paths:
-      - .github/workflows/semgrep.yml #This is the file.
+      - .github/workflows/semgrep.yml #This is the filee.
 
 name: Semgrep
 
