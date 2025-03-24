@@ -23,14 +23,19 @@ jobs:
     steps:
     - uses: actions/checkout@v4
       with:
-        fetch-depth: 0  # Ensures full history to avoid issues when pulling
+        fetch-depth: 0  # Ensures full history to avoid pull issues
     - run: semgrep ci --json > semgrep-sast-results.json
     - run: jq -r '.results | map([.path, .start.line, .check_id, .extra.message] | @csv) | join("\n")' semgrep-sast-results.json > semgrep-sast-results.csv
     - name: Commit and Push Results
       run: |
         git config --global user.name "github-actions"
         git config --global user.email "github-actions@github.com"
-        git pull --rebase origin main  # Pull latest changes before pushing
+
+        # Stash any local changes before pulling latest updates
+        git stash
+        git pull --rebase origin main
+        git stash pop  # Apply the stashed changes back
+
         git add semgrep-sast-results.csv
         git commit -m "Add Semgrep SAST scan results"
         git push origin main
