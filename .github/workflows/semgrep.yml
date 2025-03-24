@@ -3,10 +3,10 @@ on:
   pull_request: {}
   push:
     branches:
-    - main
-    - master
+      - main
+      - master
     paths:
-    - .github/workflows/semgrep.yml
+      - .github/workflows/semgrep.yml
 
 name: Semgrep
 
@@ -15,27 +15,36 @@ jobs:
     name: semgrep/ci
     runs-on: ubuntu-latest
     permissions:
-      contents: write  # Required to push resultsssss
+      contents: write  # Required to push results
     env:
       SEMGREP_APP_TOKEN: ${{ secrets.SEMGREP_APP_TOKEN }}
     container:
       image: semgrep/semgrep
     steps:
-    - uses: actions/checkout@v4
-      with:
-        fetch-depth: 0  # Ensures full history to avoid pull issues
-    - run: semgrep ci --json > semgrep-sast-results.json
-    - run: jq -r '.results | map([.path, .start.line, .check_id, .extra.message] | @csv) | join("\n")' semgrep-sast-results.json > semgrep-sast-results.csv
-    - name: Commit and Push Results
-      run: |
-        git config --global user.name "github-actions"
-        git config --global user.email "github-actions@github.com"
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Ensures full history to avoid pull issues
 
-        # Stash any local changes before pulling latest updates
-        git stash
-        git pull --rebase origin main
-        git stash pop  # Apply the stashed changes back
+      - name: Check Semgrep Token
+        run: |
+          echo "Checking Semgrep token..."
+          [[ -n "$SEMGREP_APP_TOKEN" ]] && echo "Token exists" || echo "Token is missing!"
 
-        git add semgrep-sast-results.csv
-        git commit -m "Add Semgrep SAST scan results"
-        git push origin main
+      - name: Run Semgrep Scan
+        run: semgrep ci --json > semgrep-sast-results.json
+
+      - name: Convert JSON to CSV
+        run: |
+          jq -r '.results | map([.path, .start.line, .check_id, .extra.message] | @csv) | join("\n")' semgrep-sast-results.json > semgrep-sast-results.csv
+          echo "timestamp,$(date)" >> semgrep-sast-results.csv  # Ensure changes for git commit
+
+      - name: Commit and Push Results
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+
+          git pull --rebase origin main  # Ensure latest updates before committing
+
+          git add semgrep-sast-results.csv
+          git commit -m "Add Semgrep SAST scan results" || echo "No changes to commit"
+          git push origin main
