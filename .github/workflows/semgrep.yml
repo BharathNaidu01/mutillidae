@@ -45,4 +45,9 @@ jobs:
 
           git add semgrep-sast-results.csv
           git diff --cached --quiet || git commit -m "Add Semgrep SAST scan results"
-          git push origin main
+
+          # Fetch latest changes and rebase before pushing
+          git fetch origin main
+          git rebase origin/main || (git rebase --abort && echo "Rebase failed, pushing without rebase")
+
+          git push origin main || (git pull --rebase origin main && git push origin main)
